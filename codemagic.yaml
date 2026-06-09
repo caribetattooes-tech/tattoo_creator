@@ -5,10 +5,14 @@ workflows:
     environment:
       flutter: stable
       xcode: latest
+    artifacts:
+      - "build/ios/iphonesimulator/Runner.app"
     scripts:
-      - name: Build iOS app for simulator
+      - name: Build iOS for simulator
         script: |
           flutter pub get
-          flutter build ios --simulator --no-codesign
-    artifacts:
-      - build/ios/iphonesimulator/*.app
+          flutter build ios --debug --simulator
+      - name: Verify build output
+        script: |
+          ls -la build/ios/
+          ls -la build/ios/iphonesimulator/
