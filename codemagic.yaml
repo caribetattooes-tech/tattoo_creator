@@ -1,21 +1,24 @@
 workflows:
   ios-workflow:
     name: Build iOS App
-    max_build_duration: 60
+    max_build_duration: 90
     environment:
       flutter: stable
       xcode: latest
     scripts:
-      - name: Initialize iOS project
+      - name: Check iOS folder
         script: |
           pwd
-          ls -la
+          ls -la ios/
+          ls -la ios/Runner/
+      - name: Initialize iOS project
+        script: |
           rm -rf ios
           flutter create --platforms=ios .
-          cd ios && pod install && cd ..
-      - name: Get Flutter dependencies
+          ls -la ios/
+      - name: Install CocoaPods
         script: |
-          flutter pub get
+          cd ios && pod install --repo-update && cd ..
       - name: Build iOS app for simulator
         script: |
           flutter build ios --simulator --no-codesign
