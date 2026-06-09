@@ -5,11 +5,13 @@ workflows:
     environment:
       flutter: stable
       xcode: latest
-      cocoapods: default
     scripts:
-      - name: Initialize Flutter
+      - name: Initialize iOS project
         script: |
+          pwd
+          ls -la
           flutter create --platforms=ios .
+          cd ios && pod install --repo-update && cd ..
       - name: Get Flutter dependencies
         script: |
           flutter pub get
