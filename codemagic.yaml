@@ -6,16 +6,17 @@ workflows:
       flutter: stable
       xcode: latest
     scripts:
-      - name: Configure Xcode for no codesign
+      - name: Install dependencies
         script: |
           flutter pub get
-          sed -i '' 's/CODE_SIGN_IDENTITY = "iPhone Developer"/CODE_SIGN_IDENTITY = ""/g' ios/Runner.xcodeproj/project.pbxproj
-          sed -i '' 's/"CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]" = "iPhone Developer"/"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = ""/g' ios/Runner.xcodeproj/project.pbxproj
-          sed -i '' 's/CODE_SIGN_STYLE = Automatic/CODE_SIGN_STYLE = Manual/g' ios/Runner.xcodeproj/project.pbxproj
-          sed -i '' 's/DEVELOPMENT_TEAM = .*/DEVELOPMENT_TEAM = ""/g' ios/Runner.xcodeproj/project.pbxproj
-          sed -i '' 's/PROVISIONING_PROFILE_SPECIFIER = .*/PROVISIONING_PROFILE_SPECIFIER = ""/g' ios/Runner.xcodeproj/project.pbxproj
-      - name: Build iOS for simulator
+      - name: Build iOS using xcodebuild directly
         script: |
-          flutter build ios --debug --simulator
+          flutter build ios --debug --no-codesign
+        ignore_exit_code: true
+      - name: Build with xcodebuild directly
+        script: |
+          cd ios
+          xcodebuild -workspace Runner.xcworkspace -scheme Runner -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15' build
     artifacts:
       - "build/ios/iphonesimulator/Runner.app"
+      - "ios/build/Release-iphonesimulator/Runner.app"
