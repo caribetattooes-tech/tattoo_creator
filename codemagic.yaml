@@ -5,14 +5,17 @@ workflows:
     environment:
       flutter: stable
       xcode: latest
-    artifacts:
-      - "build/ios/iphonesimulator/Runner.app"
     scripts:
-      - name: Build iOS for simulator
+      - name: Configure Xcode for no codesign
         script: |
           flutter pub get
-          flutter build ios --debug --simulator
-      - name: Verify build output
+          sed -i '' 's/CODE_SIGN_IDENTITY = "iPhone Developer"/CODE_SIGN_IDENTITY = ""/g' ios/Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/"CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]" = "iPhone Developer"/"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = ""/g' ios/Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/CODE_SIGN_STYLE = Automatic/CODE_SIGN_STYLE = Manual/g' ios/Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/DEVELOPMENT_TEAM = .*/DEVELOPMENT_TEAM = ""/g' ios/Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/PROVISIONING_PROFILE_SPECIFIER = .*/PROVISIONING_PROFILE_SPECIFIER = ""/g' ios/Runner.xcodeproj/project.pbxproj
+      - name: Build iOS for simulator
         script: |
-          ls -la build/ios/
-          ls -la build/ios/iphonesimulator/
+          flutter build ios --debug --simulator
+    artifacts:
+      - "build/ios/iphonesimulator/Runner.app"
