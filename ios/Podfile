@@ -1,0 +1,5 @@
+# iOS specific configuration
+platform :ios, '12.0'
+
+# CocoaPods dependencies
+pod 'FFmpegKit', :podspec => '../node_modules/ffmpeg-kit-ios-full-gpl/ffmpeg-kit-ios-full-gpl.podspec' rescue nil

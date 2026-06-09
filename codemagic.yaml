@@ -1,0 +1,21 @@
+workflows:
+  ios-workflow:
+    name: Build iOS App
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Get Flutter dependencies
+        script: |
+          flutter pub get
+      - name: Build iOS app for simulator
+        script: |
+          flutter build ios --simulator --no-codesign
+    artifacts:
+      - build/ios/iphonesimulator/*.app
+    publishing:
+      email:
+        recipients:
+          - notifications@codemagic.io
