@@ -10,8 +10,9 @@ workflows:
         script: |
           pwd
           ls -la
+          rm -rf ios
           flutter create --platforms=ios .
-          cd ios && pod install --repo-update && cd ..
+          cd ios && pod install && cd ..
       - name: Get Flutter dependencies
         script: |
           flutter pub get
