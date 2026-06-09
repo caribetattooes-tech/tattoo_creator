@@ -7,6 +7,9 @@ workflows:
       xcode: latest
       cocoapods: default
     scripts:
+      - name: Initialize Flutter
+        script: |
+          flutter create --platforms=ios .
       - name: Get Flutter dependencies
         script: |
           flutter pub get
@@ -15,7 +18,3 @@ workflows:
           flutter build ios --simulator --no-codesign
     artifacts:
       - build/ios/iphonesimulator/*.app
-    publishing:
-      email:
-        recipients:
-          - notifications@codemagic.io
