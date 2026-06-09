@@ -1,25 +1,41 @@
+# Este archivo configura el pipeline de CI para Codemagic
+# API reference: https://docs.codemagic.io/yaml/yaml-schema/
+
 workflows:
   ios-workflow:
-    name: Build iOS App
-    max_build_duration: 90
+    name: TattooCreator iOS Build
+    instance_type: mac_mini_m2
+    max_build_duration: 30
     environment:
       flutter: stable
       xcode: latest
     scripts:
-      - name: Install dependencies
-        script: |
-          flutter pub get
-      - name: Install CocoaPods
-        script: |
-          cd ios && pod install && cd ..
-      - name: Build iOS for simulator
+      - name: Get Flutter dependencies
+        script: flutter pub get
+      - name: Install CocoaPods dependencies
         script: |
           cd ios
-          xcodebuild -workspace Runner.xcworkspace -scheme Runner -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15' CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY='' DEVELOPMENT_TEAM='' build
-      - name: Verify build
+          pod install
+          cd ..
+      - name: Build iOS for iPhone Simulator (No Code Signing)
         script: |
-          ls -la ios/build/Debug-iphonesimulator/ || true
-          ls -la ios/build/Release-iphonesimulator/ || true
+          cd ios
+          xcodebuild \
+            -workspace Runner.xcworkspace \
+            -scheme Runner \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_IDENTITY="" \
+            DEVELOPMENT_TEAM="" \
+            build
+      - name: Package Simulator App
+        script: |
+          mkdir -p ios/build/simulator_output
+          if [ -d "ios/build/Debug-iphonesimulator/Runner.app" ]; then
+            cp -R ios/build/Debug-iphonesimulator/Runner.app ios/build/simulator_output/
+          elif [ -d "ios/build/Release-iphonesimulator/Runner.app" ]; then
+            cp -R ios/build/Release-iphonesimulator/Runner.app ios/build/simulator_output/
+          fi
     artifacts:
-      - "ios/build/Debug-iphonesimulator/Runner.app"
-      - "ios/build/Release-iphonesimulator/Runner.app"
+      - ios/build/simulator_output/**
