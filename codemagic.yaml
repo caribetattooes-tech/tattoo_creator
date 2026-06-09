@@ -6,14 +6,9 @@ workflows:
       flutter: stable
       xcode: latest
     scripts:
-      - name: Flutter pub get
-        script: |
-          flutter pub get
-      - name: Install CocoaPods
-        script: |
-          cd ios && pod install && cd ..
       - name: Build iOS app for simulator
         script: |
+          flutter pub get
           flutter build ios --simulator --no-codesign
     artifacts:
       - build/ios/iphonesimulator/*.app
