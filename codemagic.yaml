@@ -6,9 +6,6 @@ workflows:
       flutter: stable
       xcode: latest
     scripts:
-      - name: Initialize iOS project
-        script: |
-          flutter create --org com.tattoocreator --project-name tattoo_creator --platforms ios .
       - name: Get Flutter dependencies
         script: |
           flutter pub get
@@ -17,6 +14,6 @@ workflows:
           cd ios && pod install && cd ..
       - name: Build iOS app for simulator
         script: |
-          flutter build ios --simulator --no-codesign --verbose
+          flutter build ios --simulator --no-codesign
     artifacts:
       - build/ios/iphonesimulator/*.app
