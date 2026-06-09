@@ -9,14 +9,17 @@ workflows:
       - name: Install dependencies
         script: |
           flutter pub get
-      - name: Build iOS using xcodebuild directly
+      - name: Install CocoaPods
         script: |
-          flutter build ios --debug --no-codesign
-        ignore_exit_code: true
-      - name: Build with xcodebuild directly
+          cd ios && pod install && cd ..
+      - name: Build iOS for simulator
         script: |
           cd ios
-          xcodebuild -workspace Runner.xcworkspace -scheme Runner -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15' build
+          xcodebuild -workspace Runner.xcworkspace -scheme Runner -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15' CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY='' DEVELOPMENT_TEAM='' build
+      - name: Verify build
+        script: |
+          ls -la ios/build/Debug-iphonesimulator/ || true
+          ls -la ios/build/Release-iphonesimulator/ || true
     artifacts:
-      - "build/ios/iphonesimulator/Runner.app"
+      - "ios/build/Debug-iphonesimulator/Runner.app"
       - "ios/build/Release-iphonesimulator/Runner.app"
